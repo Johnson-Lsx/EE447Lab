@@ -1,14 +1,19 @@
-package sjtu.iiot.wi_fi_scanner_iiot;
+package com.example.iiot;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
+//import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import java.util.Vector;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.EditText;
+import android.util.Log;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends Activity {
     private SuperWiFi rss_scan =null;
@@ -17,11 +22,15 @@ public class MainActivity extends Activity {
     public static int testID = 0;//The ID of the test result
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        final EditText ipText = (EditText)findViewById(R.id.ipText);//The textlist of the average of the result
+        final TextView ipText = (TextView) findViewById(R.id.ipText);//The textlist of the average of the result
         final Button changactivity = (Button)findViewById(R.id.button1);//The start button
         final Button cleanlist = (Button)findViewById(R.id.button2);//Clear the textlist
+
+
         verifyStoragePermissions(this);
         rss_scan=new SuperWiFi(this);
         testlist="";
@@ -33,9 +42,19 @@ public class MainActivity extends Activity {
                 while(rss_scan.isscan()){//Wait for the end
                 }
                 RSSList=rss_scan.getRSSlist();//Get the test result
-                final EditText ipText = (EditText)findViewById(R.id.ipText);
+                final TextView ipText = (TextView)findViewById(R.id.ipText);
                 testlist=testlist+"testID:"+testID+"\n"+RSSList.toString()+"\n";
                 ipText.setText(testlist);//Display the result in the textlist
+                // --------------------------------------------------------
+                // add positioning coordinates
+                if (rss_scan.isValid()){
+                    float pos_x = rss_scan.getPos_x();
+                    float pos_y = rss_scan.getPos_y();
+                    String pos_text = "tested position:("+Float.toString(pos_x
+                                        )+","+Float.toString(pos_y)+")"+"\r\n";
+                    testlist = testlist + pos_text;
+                    ipText.setText(testlist);
+                }
             }
         });
         cleanlist.setOnClickListener(new Button.OnClickListener(){
@@ -45,6 +64,7 @@ public class MainActivity extends Activity {
                 testID=0;
             }
         });
+
     }
 
     // Storage Permissions
@@ -57,7 +77,9 @@ public class MainActivity extends Activity {
             Manifest.permission.ACCESS_WIFI_STATE,
             Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
             Manifest.permission.INTERNET,
-            Manifest.permission.ACCESS_FINE_LOCATION };
+            Manifest.permission.ACCESS_FINE_LOCATION,
+
+    };
     /**
      * Checks if the app has permission to write to device storage
      * If the app does not has permission then the user will be prompted to
