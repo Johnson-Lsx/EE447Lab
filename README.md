@@ -1,3 +1,3 @@
 # EE447Lab
-Lab codes for EE447
-Prof Luoyi Fu
+Coursework of SJTU EE447 2020, Mobile Internet. 
+Lecturer: Prof Luoyi Fu
