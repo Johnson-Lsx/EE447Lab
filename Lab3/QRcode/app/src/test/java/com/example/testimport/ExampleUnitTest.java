@@ -1,4 +1,4 @@
-package com.example.brcode;
+package com.example.testimport;
 
 import org.junit.Test;
 
